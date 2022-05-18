@@ -2,5 +2,4 @@
 #### Version: 1.1 (текущая)
 
 
-![Light screenshot](https://github.com/blyamur/
-VK-Video-Download/blob/main/app_screen.png)
+![Light screenshot](https://github.com/blyamur/VK-Video-Download/blob/main/app_screen.png)
