@@ -79,6 +79,10 @@
 
 [Requests manual](https://github.com/psf/requests)
 
+[Tkinker theme: Sun-Valley](https://github.com/rdbende/Sun-Valley-ttk-theme) - [rdbende](https://github.com/rdbende/)
+
+[Tkinker theme: Spring-Noon](https://github.com/blyamur/Spring-Noon-ttk-theme) - [blyamur](https://github.com/blyamur/)
+
 ### Copyrights and Licenses
 Not for commercial use.
 
