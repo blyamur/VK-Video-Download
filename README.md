@@ -90,5 +90,11 @@ Not for commercial use.
 *Thanks for reading :heart_eyes_cat:*
 > Спасибо за чтение!
 
+### Did you find this useful?!
+> Вы нашли это  полезным ?!
+
+Happy to hear that :) *If You want to help me, you can buy me a cup of cup of coffee ( [yoomoney](https://yoomoney.ru/to/41001158104834) or [PayPal](https://paypal.me/enkonu) or [ko-fi](https://ko-fi.com/W7W460SQ3) )*
+
+> Рад это слышать :) Если вы хотите мне помочь, вы можете угостить меня чашкой кофе
   
 © 2022 From Russia with ❤ 
