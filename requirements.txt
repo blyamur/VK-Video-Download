@@ -1,0 +1,5 @@
+youtube_dl
+os
+tkinter
+requests
+webbrowser
