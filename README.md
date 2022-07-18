@@ -11,7 +11,9 @@
 Скрипт на python 3, с графическим интерфейсом, для скачивания видео с сервиса vk.com 
 
 
+### Due to changes in the work of VK, the script does not work. We are waiting for corrections
 
+### В связи с изменениями в работе вк,скрипт не работает. Ждем исправлений
 
 ### Как начать использовать?
 
