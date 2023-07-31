@@ -79,7 +79,7 @@ class App(ttk.Frame):
 					video_url = self.entry_nm.get()
 					self.label.configure(text="Скачиваем.")
 					try:
-						ydl_opts ={'cookies':'vk.com_cookies.txt'}
+						ydl_opts ={}
 						with yt_dlp.YoutubeDL(ydl_opts) as ydl:
 							ydl.download([video_url])
 							self.label.configure(text="Скачиваем...")
