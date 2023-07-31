@@ -4,7 +4,7 @@
 ![Light screenshot](https://raw.githubusercontent.com/blyamur/VK-Video-Download/main/app_screen.jpg)
 
 
-### UPD: Julу 31 2023 
+### UPD: Julу 31 2023 Version 1.2
 Код переделан на использовании yt-dlp, скачивание открытых видео снова доступно. 
 
 
