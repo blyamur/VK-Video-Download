@@ -1,4 +1,4 @@
-youtube_dl
+yt_dlp
 os
 tkinter
 requests
