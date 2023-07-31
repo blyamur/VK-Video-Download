@@ -1,8 +1,7 @@
 ### Скрипт на python для скачивания видео с vk.com (GIU)
-#### Version: 1.1 (текущая)
+#### Version: 1.2 (текущая)
 
 ![Light screenshot](https://raw.githubusercontent.com/blyamur/VK-Video-Download/main/app_screen.jpg)
-
 
 
 
@@ -10,10 +9,6 @@
 
 Скрипт на python 3, с графическим интерфейсом, для скачивания видео с сервиса vk.com 
 
-
-### Due to changes in the work of VK, the script does not work. We are waiting for corrections
-
-### В связи с изменениями в работе вк,скрипт не работает. Ждем исправлений
 
 ### Как начать использовать?
 
@@ -59,9 +54,9 @@
 
     pip install -r requirements.txt
     
-Или отдельная установка youtube-dl
+Или отдельная установка yt-dlp
 
-    pip install youtube-dl
+    python3 -m pip install -U yt-dlp
     
 Команда на сборку exe файла в pyinstaller: 
 
@@ -77,7 +72,9 @@
 
 [GUI for Pyinstaller based on Tkinker](https://github.com/blyamur/GUI-Pyinstaller-Pichuga)
 
-[youtube-dl  manual](https://github.com/ytdl-org/youtube-dl)
+[yt-dlp Installation](https://github.com/yt-dlp/yt-dlp/wiki/Installation)
+
+[yt-dlp Manual](https://github.com/yt-dlp/yt-dlp)
 
 [Requests manual](https://github.com/psf/requests)
 
