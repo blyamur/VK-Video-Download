@@ -79,13 +79,13 @@ class App(ttk.Frame):
 					video_url = self.entry_nm.get()
 					self.label.configure(text="Скачиваем.")
 					try:
-						ydl_opts ={}
+						ydl_opts = {'outtmpl': 'downloads/%(title)s.%(ext)s',}
 						with yt_dlp.YoutubeDL(ydl_opts) as ydl:
 							ydl.download([video_url])
 							self.label.configure(text="Скачиваем...")
 							info = ydl.extract_info(video_url, download=True)
 							self.entry_nm.delete(0, tk.END)
-							self.label.configure(text="Видео успешно скачано \n «"+info['title']+"» ")
+							self.label.configure(text="Видео успешно скачано\n «"+info['title']+"» ")
 							
 					except:
 						self.entry_nm.delete(0, tk.END)
@@ -141,7 +141,7 @@ if __name__ == "__main__":
 	root.iconbitmap('theme/icon.ico')
 	root.tk.call("source", "theme/vk_theme.tcl")
 	root.tk.call("set_theme", "light")
-	currentVersion = '1.2'
+	currentVersion = '1.1'
 	app = App(root)
 	app.pack(fill="both", expand=True)
 	root.update()
