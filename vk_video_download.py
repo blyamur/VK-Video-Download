@@ -1,4 +1,4 @@
-import youtube_dl
+import yt_dlp
 import os
 from os import path
 import tkinter as tk
@@ -7,7 +7,7 @@ from tkinter import ttk
 from tkinter import messagebox
 import requests
 import webbrowser
-
+#https://vk.com/video-87011294_456249654 example 
 #FromRussiaWithLove | Mons (https://github.com/blyamur/VK-Video-Download/)  | ver. 1.1 | "non-commercial use only, for personal use
 
 class App(ttk.Frame):
@@ -79,10 +79,9 @@ class App(ttk.Frame):
 					video_url = self.entry_nm.get()
 					self.label.configure(text="Скачиваем.")
 					try:
-						ydl_opts ={}
-						with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+						ydl_opts ={'cookies':'vk.com_cookies.txt'}
+						with yt_dlp.YoutubeDL(ydl_opts) as ydl:
 							ydl.download([video_url])
-							self.label.configure(text="Скачиваем..")
 							self.label.configure(text="Скачиваем...")
 							info = ydl.extract_info(video_url, download=True)
 							self.entry_nm.delete(0, tk.END)
@@ -142,7 +141,7 @@ if __name__ == "__main__":
 	root.iconbitmap('theme/icon.ico')
 	root.tk.call("source", "theme/vk_theme.tcl")
 	root.tk.call("set_theme", "light")
-	currentVersion = '1.1'
+	currentVersion = '1.2'
 	app = App(root)
 	app.pack(fill="both", expand=True)
 	root.update()
