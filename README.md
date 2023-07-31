@@ -4,6 +4,9 @@
 ![Light screenshot](https://raw.githubusercontent.com/blyamur/VK-Video-Download/main/app_screen.jpg)
 
 
+### UPD: Julу 31 2023 
+Код переделан на использовании yt-dlp, скачивание достпных видео снова началось. 
+
 
 ### Что это?
 
