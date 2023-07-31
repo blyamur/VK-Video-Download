@@ -1,5 +1,4 @@
 yt_dlp
-os
 tkinter
 requests
 webbrowser
