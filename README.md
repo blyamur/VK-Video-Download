@@ -102,4 +102,4 @@ Happy to hear that :) *If You want to help me, you can buy me a cup of coffee :c
 
 > Рад это слышать :) Если вы хотите мне помочь, вы можете угостить меня чашечкой кофе 
   
-© 2022 From Russia with ❤ 
+© 2023 From Russia with ❤ 
