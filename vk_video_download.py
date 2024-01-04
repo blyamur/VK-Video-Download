@@ -6,7 +6,7 @@ from tkinter import StringVar, ttk, messagebox
 import yt_dlp
 
 #https://vk.com/video-87011294_456249654 example 
-# FromRussiaWithLove | Mons (https://github.com/blyamur/VK-Video-Download/)  | ver. 1.2 | "non-commercial use only, for personal use"
+#FromRussiaWithLove | Mons (https://github.com/blyamur/VK-Video-Download/)  | ver. 1.2 | "non-commercial use only, for personal use"
 
 class App(ttk.Frame):
     def __init__(self, parent):
@@ -15,7 +15,7 @@ class App(ttk.Frame):
             self.columnconfigure(index=index, weight=1)
             self.rowconfigure(index=index, weight=1)
         self.setup_widgets()
-
+        
     def setup_widgets(self):
         self.widgets_frame = ttk.Frame(self, padding=(0, 10, 0, 0))
         self.widgets_frame.grid(
