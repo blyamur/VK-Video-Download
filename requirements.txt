@@ -3,3 +3,4 @@ tkinter
 requests
 webbrowser
 threading
+requests
