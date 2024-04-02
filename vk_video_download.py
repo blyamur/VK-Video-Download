@@ -77,7 +77,7 @@ class App(ttk.Frame):
         try:
             github_page = requests.get('https://raw.githubusercontent.com/blyamur/VK-Video-Download/main/README.md')
             github_page_html = str(github_page.content).split()
-            for i in range(0,3):
+            for i in range(0,8):
                 try:
                     index = github_page_html.index(('1.' + str(i)))
                     version = github_page_html[index]
