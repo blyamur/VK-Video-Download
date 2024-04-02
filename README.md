@@ -1,4 +1,4 @@
-### Скрипт на python для скачивания видео с vk.com (GIU)
+### Скрипт на python для скачивания видео с vk.com (GIU) 1.5
 #### Version: 1.5 (текущая)
 
 ![Light screenshot](https://raw.githubusercontent.com/blyamur/VK-Video-Download/main/app_screen.jpg)
