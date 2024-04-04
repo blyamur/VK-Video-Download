@@ -120,7 +120,8 @@ class App(ttk.Frame):
 
     def download_video(self, video_url):
         try:
-            ydl_opts = {'outtmpl': 'downloads/%(title)s.%(ext)s', 'quiet': True, 'progress_hooks': [self.my_hook]}
+            #ydl_opts = {'outtmpl': 'downloads/%(title)s.%(ext)s', 'quiet': True, 'progress_hooks': [self.my_hook]}
+            ydl_opts = {'outtmpl': 'downloads/%(title)s.mp4', 'quiet': True, 'progress_hooks': [self.my_hook]}
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([video_url])
                 info = ydl.extract_info(video_url, download=True)
