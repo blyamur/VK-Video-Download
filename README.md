@@ -52,6 +52,9 @@
 - Куда скачивается готовое видео?
 > В директорию downloads, находящуюся  там же где размещается ваш скрипт vk_video_download.py
 
+- В unix системах возможна [ошибка](https://github.com/blyamur/VK-Video-Download/issues/4) связанная с иконкой
+> необходимо закомментировать строку 158: ```#root.iconbitmap('./theme/icon.ico')```
+
 ---
 #### Для работы вам понадобится только содержимое папки *theme* и файл *vk_video_download.py*
 
