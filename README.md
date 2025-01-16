@@ -97,6 +97,8 @@
 
 [Tkinker theme: Spring-Noon](https://github.com/blyamur/Spring-Noon-ttk-theme) - [blyamur](https://github.com/blyamur/)
 
+[Visit the author's blog](https://blog/mons.ws?p=4485)
+
 ### Copyrights and Licenses
 Not for commercial use.
 
