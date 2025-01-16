@@ -4,7 +4,11 @@ import webbrowser
 from tkinter import ttk, messagebox
 import yt_dlp
 import requests
-#https://vk.com/video-87011294_456249654 example 
+
+# https://vk.com/video-87011294_456249654 | example for vk.com
+# https://vkvideo.ru/video-50804569_456239864 | example for vkvideo.ru
+# https://my.mail.ru/v/hi-tech_mail/video/_groupvideo/437.html | example for my.mail.ru
+# https://rutube.ru/video/a16f1e575e114049d0e4d04dc7322667/ | example for rutube.ru
 # FromRussiaWithLove | Mons (https://github.com/blyamur/VK-Video-Download/)  | ver. 1.5 | "non-commercial use only, for personal use"
 
 currentVersion = '1.5'
@@ -139,11 +143,9 @@ class App(ttk.Frame):
        elif d['status'] == 'finished':
            root.after(0, lambda: self.status_label.configure(text="Загрузка завершена!", font=("Arial", 10)))
 
-
     def on_enter_pressed(self, event):
         self.get_directory_string()
-
-
+        
 if __name__ == "__main__":
     root = tk.Tk()
     w = root.winfo_screenwidth()
