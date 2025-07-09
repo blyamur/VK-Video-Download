@@ -3,7 +3,7 @@
 
 ![Light screenshot](https://raw.githubusercontent.com/blyamur/VK-Video-Download/main/app_screen.jpg)
 
-### UPD: Jule 4 2025 Version 1.6
+#### UPD: Jule 4 2025 Version 1.6
 Добавлен вывод в лог файл и в консоль (часть строк закомментированы), оставшиеся при необходимости можете отключить
 Горячие клавиши в русской раскладке теперь работают. В связи с тем, что это особенность Tkinker, может чудить.
 Добавлена принудительная обработка в Tkinker горячих клавиш в РУС раскладке:
@@ -12,19 +12,19 @@
 Вырезать *Control-x*  | 
 Выделить *Control-a*
 
-### UPD: April 2 2024 Version 1.5
+##### UPD: April 2 2024 Version 1.5
 Код переделан на использовании yt-dlp, скачивание открытых видео снова доступно. 
 Функция download_video запускается в отдельном потоке, что позволяет основному потоку выполнения программы обновлять состояние интерфейса. В процессе скачивания, текущая информация отображается в интерфейсе.
 
-### UPD: January 01 2025 Version 1.5
+##### UPD: January 01 2025 Version 1.5
 Скрипт вполне успешно скачивает с таких сервисов как: vk.com, rutube.ru, Видео Mail.Ru, youtube.com и etc.  Проверялось пользователями, подробнее [можно почитать в обсуждении](https://github.com/blyamur/VK-Video-Download/issues/2)
 
-### Что это?
+#### Что это?
 
 Скрипт на python 3, с графическим интерфейсом, для скачивания видео с сервиса vk.com 
 
 
-### Как начать использовать?
+#### Как начать использовать?
 
 1. Скачайте архив с последней версией и распакуйте в любое удобное для вас место; 
 
@@ -40,7 +40,7 @@
 
 
 
-### Возможные проблемы
+#### Возможные проблемы
 
 - Не вставляется ссылка в поле ввода
 > ~У вас скорее всего включена русская раскладка клавиатуры, переключите на английскую.~
@@ -95,7 +95,7 @@
 ***Скрипт был протестирован только в Windows с использованием версии Python 3.10.2***
 
 
-### Полезные ссылки:
+#### Полезные ссылки:
 
 [GUI for Pyinstaller based on Tkinker](https://github.com/blyamur/GUI-Pyinstaller-Pichuga)
 
@@ -111,7 +111,7 @@
 
 [Visit the author's blog](https://blog/mons.ws?p=4485)
 
-### Copyrights and Licenses
+#### Copyrights and Licenses
 Not for commercial use.
 
 
@@ -119,7 +119,7 @@ Not for commercial use.
 > Спасибо за чтение!
 
 
-### Did you find this useful?! | Вы нашли это  полезным ?!
+#### Did you find this useful?! | Вы нашли это  полезным ?!
 
 Happy to hear that :) *If You want to help me, you can buy me a cup of coffee :coffee: ( [yoomoney](https://yoomoney.ru/to/41001158104834) or [ko-fi](https://ko-fi.com/monseg), [boosty.to](https://boosty.to/monseg) )* 
 
