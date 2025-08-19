@@ -1,30 +1,32 @@
 import threading
 import tkinter as tk
+from tkinter import ttk, messagebox, Menu # Добавлен импорт Menu
 import webbrowser
-from tkinter import ttk, messagebox
 import yt_dlp
 import requests
 import logging
 import os
+from logging.handlers import RotatingFileHandler
+
 
 # Настройка логирования
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.StreamHandler(),  # Вывод в консоль
-        #logging.FileHandler('vk_video_download.log')  # Вывод в файл
+        logging.StreamHandler(),
+        RotatingFileHandler('vk_video_download.log', maxBytes=10*1024*1024, backupCount=5)  # 10 MB, 5 резервных копий
     ]
 )
 logger = logging.getLogger(__name__)
 
-# https://vk.com/video-87011294_456249654 | example for vk.com
-# https://vkvideo.ru/video-50804569_456239864 | example for vkvideo.ru
-# https://my.mail.ru/v/hi-tech_mail/video/_groupvideo/437.html | example for my.mail.ru
-# https://rutube.ru/video/a16f1e575e114049d0e4d04dc7322667/ | example for rutube.ru
-# FromRussiaWithLove | Mons (https://github.com/blyamur/VK-Video-Download/)  | ver. 1.6 | "non-commercial use only, for personal use"
+# https://vk.com/video-87011294_456249654   | example for vk.com
+# https://vkvideo.ru/video-50804569_456239864   | example for vkvideo.ru
+# https://my.mail.ru/v/hi-tech_mail/video/_groupvideo/437.html   | example for my.mail.ru
+# https://rutube.ru/video/a16f1e575e114049d0e4d04dc7322667/   | example for rutube.ru
+# FromRussiaWithLove | Mons (https://github.com/blyamur/VK-Video-Download/  )  | ver. 1.7 | "non-commercial use only, for personal use"
 
-currentVersion = '1.6'
+currentVersion = '1.7'
 
 class App(ttk.Frame):
     def __init__(self, parent):
@@ -32,6 +34,15 @@ class App(ttk.Frame):
         for index in [0, 1, 2]:
             self.columnconfigure(index=index, weight=1)
             self.rowconfigure(index=index, weight=1)
+            
+        # Создание контекстного меню для Entry
+        self.entry_context_menu = Menu(self, tearoff=0)
+        self.entry_context_menu.add_command(label="Вырезать", command=self.cut_text)
+        self.entry_context_menu.add_command(label="Копировать", command=self.copy_text)
+        self.entry_context_menu.add_command(label="Вставить", command=self.paste_text)
+        self.entry_context_menu.add_separator()
+        self.entry_context_menu.add_command(label="Выделить всё", command=self.select_all)
+        
         self.setup_widgets()
 
     def setup_widgets(self):
@@ -61,6 +72,10 @@ class App(ttk.Frame):
         
         # Привязка для обработки русской раскладки через keycode
         self.entry_nm.bind('<Control-KeyPress>', self.handle_control_key)
+        
+        # --- НОВОЕ: Привязка правой кнопки мыши ---
+        # Привязываем событие клика правой кнопкой мыши
+        self.entry_nm.bind("<Button-3>", self.show_context_menu)
 
         self.bt_frame = ttk.Frame(self, padding=(0, 0, 0, 0))
         self.bt_frame.grid(row=1, column=0, padx=(10, 10), pady=0, columnspan=10, sticky="n")
@@ -93,6 +108,20 @@ class App(ttk.Frame):
             self.copy_frame, text="Donate", style="Url.TButton", command=self.donate
         )
         self.UrlButton.grid(row=1, column=7, padx=20, pady=0, columnspan=2, sticky="w")
+
+    def show_context_menu(self, event):
+        """Отображает контекстное меню для поля ввода."""
+        try:
+            # Фокус на виджете при клике правой кнопкой
+            self.entry_nm.focus_set()
+            # Отображаем меню
+            self.entry_context_menu.tk_popup(event.x_root, event.y_root)
+        except Exception as e:
+            logger.error(f"Error showing context menu: {str(e)}")
+            self.status_label.configure(text=f"Ошибка контекстного меню: {str(e)}")
+        finally:
+            # Убедиться, что меню закрывается правильно
+            self.entry_context_menu.grab_release()
 
     def handle_control_key(self, event):
         """Обработка горячих клавиш для русской раскладки через keycode."""
@@ -163,7 +192,7 @@ class App(ttk.Frame):
 
     def openweb(self):
         try:
-            webbrowser.open_new_tab('https://github.com/blyamur/VK-Video-Download')
+            webbrowser.open_new_tab('https://github.com/blyamur/VK-Video-Download  ')
             #logger.info("Opened GitHub page")
         except Exception as e:
             #logger.error(f"Error opening web page: {str(e)}")
@@ -171,7 +200,7 @@ class App(ttk.Frame):
 
     def donate(self):
         try:
-            webbrowser.open_new_tab('https://ko-fi.com/monseg')
+            webbrowser.open_new_tab('https://ko-fi.com/monseg  ')
             #logger.info("Opened donation page")
         except Exception as e:
             #logger.error(f"Error opening donation page: {str(e)}")
@@ -179,39 +208,47 @@ class App(ttk.Frame):
 
     def checkUpdate(self, method='Button'):
         try:
-            #logger.info("Checking for updates")
-            github_page = requests.get('https://raw.githubusercontent.com/blyamur/VK-Video-Download/main/README.md')
+            logger.info("Checking for updates")
+            github_page = requests.get('https://raw.githubusercontent.com/blyamur/VK-Video-Download/main/README.md  ')
             github_page_html = str(github_page.content).split()
+            version = None
             for i in range(0, 8):
                 try:
                     index = github_page_html.index(('1.' + str(i)))
                     version = github_page_html[index]
+                    break
                 except ValueError:
                     continue
+
+            if version is None:
+                logger.warning("No version found in README.md")
+                if method == 'Button':
+                    messagebox.showwarning(title='Ошибка обновления', message='Не удалось найти информацию о версии.')
+                return
 
             if float(version) > float(currentVersion):
                 self.updateApp(version)
             else:
                 if method == 'Button':
                     messagebox.showinfo(title='Обновления не найдены', message=f'Обновления не найдены.\nТекущая версия: {version}')
-                    #logger.info(f"No updates found. Current version: {version}")
+                    logger.info(f"No updates found. Current version: {version}")
         except requests.exceptions.ConnectionError as e:
-            #logger.error(f"Connection error during update check: {str(e)}")
+            logger.error(f"Connection error during update check: {str(e)}")
             if method == 'Button':
                 messagebox.showwarning(title='Нет доступа к сети', message='Нет доступа к сети.\nПроверьте подключение к интернету.')
         except Exception as e:
-            #logger.error(f"Error in checkUpdate: {str(e)}")
-            self.status_label.configure(text=f"Ошибка проверки обновлений: {str(e)}")
+            logger.error(f"Error in checkUpdate: {str(e)}")
+            messagebox.showerror(title="Ошибка", message=f"Ошибка проверки обновлений: {str(e)}")
 
     def updateApp(self, version):
         try:
             update = messagebox.askyesno(title='Найдено обновление', message=f'Доступна новая версия {version} . Обновимся?')
             if update:
-                webbrowser.open_new_tab('https://github.com/blyamur/VK-Video-Download')
-                #logger.info(f"Update prompted for version {version}")
+                webbrowser.open_new_tab('https://github.com/blyamur/VK-Video-Download  ')
+                logger.info(f"Update prompted for version {version}")
         except Exception as e:
-            #logger.error(f"Error in updateApp: {str(e)}")
-            self.status_label.configure(text=f"Ошибка обновления: {str(e)}")
+            logger.error(f"Error in updateApp: {str(e)}")
+            messagebox.showerror(title="Ошибка", message=f"Ошибка обновления: {str(e)}")
 
     def get_directory_string(self):
         try:
@@ -233,15 +270,18 @@ class App(ttk.Frame):
 
     def download_video(self, video_url):
         try:
+            os.makedirs('downloads', exist_ok=True)
             ydl_opts = {'outtmpl': 'downloads/%(title)s.mp4', 'quiet': True, 'progress_hooks': [self.my_hook]}
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([video_url])
                 info = ydl.extract_info(video_url, download=True)
                 self.status_label.configure(text=f"Видео успешно скачано: «{info['title']}»")
                 logger.info(f"Video downloaded successfully: {info['title']}")
-        except Exception as e:
-            logger.error(f"Error downloading video {video_url}: {str(e)}")
+        except yt_dlp.utils.DownloadError as e:
+            logger.error(f"Download error for {video_url}: {str(e)}")
             self.status_label.configure(text=f"Ошибка скачивания: {str(e)}")
+        except Exception as e:
+            logger.error(f"Unexpected error downloading video {video_url}: {str(e)}")
+            self.status_label.configure(text=f"Неизвестная ошибка: {str(e)}")
 
     def my_hook(self, d):
         try:
