@@ -10,14 +10,14 @@ import random
 import string
 from logging.handlers import RotatingFileHandler
 import datetime
-import re  
+import re
+import sys
 
-
-# https://vk.com/video-87011294_456249654   | example for vk.com
-# https://vkvideo.ru/video-50804569_456239864   | example for vkvideo.ru
-# https://my.mail.ru/v/hi-tech_mail/video/_groupvideo/437.html   | example for my.mail.ru
-# https://rutube.ru/video/a16f1e575e114049d0e4d04dc7322667/   | example for rutube.ru
-# FromRussiaWithLove | Mons (https://github.com/blyamur/VK-Video-Download/  )  | ver. 1.8 | "non-commercial use only, for personal use"
+# https://vk.com/video-87011294_456249654     | example for vk.com
+# https://vkvideo.ru/video-50804569_456239864     | example for vkvideo.ru
+# https://my.mail.ru/v/hi-tech_mail/video/_groupvideo/437.html     | example for my.mail.ru
+# https://rutube.ru/video/a16f1e575e114049d0e4d04dc7322667/     | example for rutube.ru
+# FromRussiaWithLove | Mons (https://github.com/blyamur/VK-Video-Download/)  | ver. 1.8 | "non-commercial use only, for personal use"
 
 # Настройка логирования
 logging.basicConfig(
@@ -47,9 +47,10 @@ class App(ttk.Frame):
         self.entry_context_menu.add_separator()
         self.entry_context_menu.add_command(label="Выделить всё", command=self.select_all)
         
-        # Хранилище прогресса для всех потоков
+        # Хранилище прогресса
         self.download_progress = {}
-        self.has_activity = False  # Флаг: было ли какое-либо событие?
+        self.has_activity = False
+        self.active_threads = []  # Список активных потоков
 
         self.setup_widgets()
 
@@ -90,7 +91,7 @@ class App(ttk.Frame):
 
         self.bt_frame.columnconfigure(0, weight=1)
 
-        # --- Статусная строка: полупрозрачная, по центру ---
+        # --- Статусная строка ---
         self.status_label = ttk.Label(
             self.widgets_frame,
             text="Готов к загрузке",
@@ -98,20 +99,20 @@ class App(ttk.Frame):
             font=("-size", 10, "-weight", "normal"),
             wraplength=600,
             anchor="center",
-            foreground="#aaaaaa"  # Полупрозрачный серый
+            foreground="#aaaaaa"
         )
-        self.status_label.grid(row=3, column=0, padx=20, pady=(15, 5), sticky="ew")
+        self.status_label.grid(row=3, column=0, padx=20, pady=(10, 5), sticky="ew")
 
-        # Через 3 секунды очистить подсказку, если не было активности
+        # Убрать подсказку через 3 сек
         root.after(3000, self.clear_hint_if_no_activity)
 
-        # --- Чекбоксы (свичи) в одну строку ---
+        # --- Чекбоксы ---
         self.check_frame = ttk.Frame(self.widgets_frame)
         self.check_frame.grid(row=2, column=0, padx=20, pady=(5, 5), sticky="w")
 
-        self.var_random_name = tk.StringVar(value='')  # 'random' если включено
-        self.var_limit_length = tk.StringVar(value='') # 'limit' если включено
-        self.var_folder = tk.StringVar(value='')       # 'folder' если включено
+        self.var_random_name = tk.StringVar(value='')
+        self.var_limit_length = tk.StringVar(value='')
+        self.var_folder = tk.StringVar(value='')
 
         self.check_random = ttk.Checkbutton(
             self.check_frame,
@@ -143,9 +144,9 @@ class App(ttk.Frame):
         )
         self.check_folder.grid(row=0, column=2, padx=0, pady=0, sticky="w")
 
-        # --- Кнопки: About, Версия, Donate ---
+        # --- Кнопки ---
         self.copy_frame = ttk.Frame(self, padding=(0, 0, 0, 10))
-        self.copy_frame.grid(row=7, column=0, padx=10, pady=5, columnspan=10, sticky="s")
+        self.copy_frame.grid(row=8, column=0, padx=10, pady=5, columnspan=10, sticky="s")
 
         self.UrlButton = ttk.Button(self.copy_frame, text="About", style="Url.TButton", command=self.openweb)
         self.UrlButton.grid(row=1, column=0, padx=20, pady=0, columnspan=2, sticky="n")
@@ -159,7 +160,6 @@ class App(ttk.Frame):
         self.UrlButton.grid(row=1, column=7, padx=20, pady=0, columnspan=2, sticky="w")
 
     def clear_hint_if_no_activity(self):
-        """Если не было активности — убрать 'Готов к загрузке'"""
         if not self.has_activity:
             self.status_label.configure(text="")
 
@@ -169,7 +169,9 @@ class App(ttk.Frame):
             self.entry_context_menu.tk_popup(event.x_root, event.y_root)
         except Exception as e:
             logger.error(f"Error showing context menu: {str(e)}")
-            self.set_status_error(f"Ошибка контекстного меню: {str(e)}")
+            self.set_status_error(f"Ошибка: {str(e)}")
+        finally:
+            self.entry_context_menu.grab_release()
 
     def handle_control_key(self, event):
         try:
@@ -183,7 +185,7 @@ class App(ttk.Frame):
             elif keycode == 65:  # Ctrl+A / Ф
                 self.select_all(); return "break"
         except Exception as e:
-            self.set_status_error(f"Ошибка клавиш: {str(e)}")
+            self.set_status_error(f"Ошибка: {str(e)}")
             return "break"
 
     def copy_text(self, event=None):
@@ -191,7 +193,7 @@ class App(ttk.Frame):
             self.entry_nm.event_generate("<<Copy>>")
             return "break"
         except Exception as e:
-            self.set_status_error(f"Ошибка копирования: {str(e)}")
+            self.set_status_error(f"Ошибка: {str(e)}")
             return "break"
 
     def paste_text(self, event=None):
@@ -199,7 +201,7 @@ class App(ttk.Frame):
             self.entry_nm.event_generate("<<Paste>>")
             return "break"
         except Exception as e:
-            self.set_status_error(f"Ошибка вставки: {str(e)}")
+            self.set_status_error(f"Ошибка: {str(e)}")
             return "break"
 
     def cut_text(self, event=None):
@@ -207,7 +209,7 @@ class App(ttk.Frame):
             self.entry_nm.event_generate("<<Cut>>")
             return "break"
         except Exception as e:
-            self.set_status_error(f"Ошибка вырезания: {str(e)}")
+            self.set_status_error(f"Ошибка: {str(e)}")
             return "break"
 
     def select_all(self, event=None):
@@ -215,7 +217,7 @@ class App(ttk.Frame):
             self.entry_nm.event_generate("<<SelectAll>>")
             return "break"
         except Exception as e:
-            self.set_status_error(f"Ошибка выделения: {str(e)}")
+            self.set_status_error(f"Ошибка: {str(e)}")
             return "break"
 
     def openweb(self):
@@ -265,26 +267,33 @@ class App(ttk.Frame):
                 self.set_status_error("Нет корректных ссылок")
                 return
 
+            video_urls = list(dict.fromkeys(video_urls))  # Убрать дубли
+
             self.has_activity = True
             self.entry_nm.delete(0, tk.END)
 
             for idx, url in enumerate(video_urls, start=1):
                 t = threading.Thread(target=self.download_video, args=(url, idx))
+                t.daemon = True  # Важно: поток завершится при закрытии основного
                 t.start()
+                self.active_threads.append(t)  # Сохраняем ссылку
 
         except Exception as e:
             logger.error(f"Ошибка: {e}")
             self.set_status_error(f"Ошибка: {str(e)}")
 
+    def make_progress_hook(self, thread_id):
+        def hook(d):
+            self.my_hook(d, thread_id)
+        return hook
+
     def download_video(self, video_url, serial_number):
         try:
             os.makedirs('downloads', exist_ok=True)
 
-            # Генерация уникальных частей имени
             timestr = datetime.datetime.now().strftime('%d%m%Y_%H%M%S_%f')[:-4]
             random_suffix = ''.join(random.choices(string.ascii_letters + string.digits, k=4))
 
-            # Чтение состояния чекбоксов
             use_random_name = (self.var_random_name.get() == 'random')
             limit_length = (self.var_limit_length.get() == 'limit')
             use_folder = (self.var_folder.get() == 'folder')
@@ -310,7 +319,7 @@ class App(ttk.Frame):
             ydl_opts = {
                 'outtmpl': outtmpl,
                 'quiet': True,
-                'progress_hooks': [lambda d: self.my_hook(d, thread_id)]
+                'progress_hooks': [self.make_progress_hook(thread_id)]
             }
 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -347,13 +356,12 @@ class App(ttk.Frame):
 
     def update_progress_display(self):
         line = " ".join([f"{tid} {pct}" for tid, pct in self.download_progress.items()])
-        # Сделать текст чёрным при первом событии
         color = "#000000" if self.has_activity else "#aaaaaa"
         root.after(0, lambda: self.status_label.configure(text=line, foreground=color))
 
     def set_status_error(self, msg):
         self.has_activity = True
-        root.after(0, lambda: self.status_label.configure(text=msg, foreground="#d93025"))  # красный
+        root.after(0, lambda: self.status_label.configure(text=msg, foreground="#d93025"))
 
     def on_enter_pressed(self, event):
         self.get_directory_string()
@@ -369,7 +377,7 @@ if __name__ == "__main__":
         root = tk.Tk()
         w = root.winfo_screenwidth() // 2 - 200
         h = root.winfo_screenheight() // 2 - 200
-        root.geometry(f'680x320+{w}+{h}')
+        root.geometry(f'680x350+{w}+{h}')
         root.resizable(False, False)
         root.title("Скачать видео с VK.com")
         root.iconbitmap('theme/icon.ico')
@@ -380,8 +388,17 @@ if __name__ == "__main__":
         app.pack(fill="both", expand=True)
         root.update()
         logger.info("Приложение запущено")
+
+        # --- Перехват закрытия окна ---
+        def on_closing():
+            root.destroy()
+            sys.exit(0)  # Завершить программу полностью
+
+        root.protocol("WM_DELETE_WINDOW", on_closing)
+
         root.mainloop()
 
     except Exception as e:
         logger.error(f"Ошибка запуска: {e}")
         messagebox.showerror("Ошибка", f"Ошибка запуска: {e}")
+        sys.exit(1)
