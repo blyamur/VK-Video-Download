@@ -1,3 +1,4 @@
+<!-- version-compat: 1.9 -->
 ### Скрипт на python для скачивания видео с vk.com (и не только) (GIU) 
 #### Version: 2.0
 
