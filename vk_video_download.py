@@ -14,7 +14,6 @@ import re
 import sys
 import time
 
-
 # https://vk.com/video-87011294_456249654     | example for vk.com
 # https://vkvideo.ru/video-50804569_456239864     | example for vkvideo.ru
 # https://my.mail.ru/v/hi-tech_mail/video/_groupvideo/437.html     | example for my.mail.ru
