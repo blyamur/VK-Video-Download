@@ -13,6 +13,7 @@ import datetime
 import re
 import sys
 import time
+import platform
 
 # https://vk.com/video-87011294_456249654     | example for vk.com
 # https://vkvideo.ru/video-50804569_456239864     | example for vkvideo.ru
@@ -609,10 +610,22 @@ class App(ttk.Frame):
 
 if __name__ == "__main__":
     try:
-        if not os.path.exists('theme/vk_theme.tcl'):
-            raise FileNotFoundError("Файл темы не найден: theme/vk_theme.tcl")
-        if not os.path.exists('theme/icon.ico'):
-            raise FileNotFoundError("Файл иконки не найден: theme/icon.ico")
+        # Определяем операционную систему
+        system = platform.system()
+        is_linux = system == 'Linux'
+        
+        if is_linux:
+            logger.info("Запуск приложения под Linux")
+        
+        # Определяем абсолютный путь к директории скрипта
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        theme_dir = os.path.join(script_dir, 'theme')
+        theme_file = os.path.join(theme_dir, 'vk_theme.tcl')
+        icon_ico = os.path.join(theme_dir, 'icon.ico')
+        icon_png = os.path.join(script_dir, 'icon.png')
+        
+        if not os.path.exists(theme_file):
+            raise FileNotFoundError(f"Файл темы не найден: {theme_file}")
 
         root = tk.Tk()
         w = root.winfo_screenwidth() // 2 - 200
@@ -620,8 +633,39 @@ if __name__ == "__main__":
         root.geometry(f'720x430+{w}+{h}')
         root.resizable(False, False)
         root.title("Скачать видео с VK.com")
-        root.iconbitmap('theme/icon.ico')
-        root.tk.call("source", "theme/vk_theme.tcl")
+        
+        # Попытка загрузить иконку (поддержка разных платформ)
+        icon_loaded = False
+        # Сначала пробуем .ico (Windows)
+        if os.path.exists(icon_ico):
+            try:
+                root.iconbitmap(icon_ico)
+                icon_loaded = True
+                if is_linux:
+                    logger.info("Иконка загружена из .ico файла")
+            except Exception as e:
+                if is_linux:
+                    logger.warning(f"Не удалось загрузить иконку .ico (Linux не поддерживает .ico напрямую): {e}")
+                else:
+                    logger.warning(f"Не удалось загрузить иконку .ico: {e}")
+        
+        # Если .ico не сработал, пробуем PNG (Linux)
+        if not icon_loaded and os.path.exists(icon_png):
+            try:
+                icon_image = tk.PhotoImage(file=icon_png)
+                root.iconphoto(True, icon_image)
+                # Сохраняем ссылку, чтобы изображение не было удалено сборщиком мусора
+                root.icon_image = icon_image
+                icon_loaded = True
+                if is_linux:
+                    logger.info("Иконка загружена из .png файла (Linux)")
+            except Exception as e:
+                logger.warning(f"Не удалось загрузить иконку .png: {e}")
+        
+        if not icon_loaded:
+            logger.warning("Иконка не загружена, приложение продолжит работу без иконки")
+        
+        root.tk.call("source", theme_file)
         root.tk.call("set_theme", "light")
 
         app = App(root)
